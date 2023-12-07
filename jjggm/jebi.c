@@ -12,41 +12,97 @@
 void jebi_init(void);
 void jebi_manual(key_t key);
 void jebi_dialog(int p, char message[]);
-void jebi_tail(int i, int nx, int ny);
-int selected = 0; // player 0∫Œ≈Õ Ω√¿€
-int fail;
+void live_init(void);
+void death_init(void);
+int selected = 0;
+int deathcount;
+bool live[PLAYER_MAX];
+int now=0;
+int fail=0;
 
-int px[PLAYER_MAX], py[PLAYER_MAX], period[PLAYER_MAX];  // ∞¢ «√∑π¿ÃæÓ ¿ßƒ°, ¿Ãµø ¡÷±‚
+int px[PLAYER_MAX], py[PLAYER_MAX], period[PLAYER_MAX];
 
 void jebi_init(void) {
     map_init(5, (n_alive * 3) + 2);
     int x, y, n = 0;
-    for (int i = 0; i < n_player; i++) {
+
+    for (int i = 0; i < n_alive; i++) {
 
         x = 2;
-        y = 2 + (n * 3);
+        y = 2 + (i * 3);
 
-        PLAYER* p = &player[i];
-        if (p->is_alive == true) {
-            n++;
+        if (i == 0) {
+            px[0] = x;
+            py[0] = y;
+            back_buf[px[0]][py[0]] = '@';
+        }
+        else {
             px[i] = x;
             py[i] = y;
-
-            back_buf[px[i]][py[i]] = '?';  // (0 .. n_player-1)
-        }
-        if (i == 0 && p->is_alive == true) {
-            back_buf[px[0]][py[0]] = '@';
+            back_buf[px[0]][py[0]] = '?';
         }
     }
 
+    tick = 0;
+}
+void live_init(void) {
+    map_init(5, (n_alive * 3) + 2);
+    int x, y;
+    for (int i = 0; i < n_alive; i++) {
+
+        x = 2;
+        y = 2 + (i * 3);
+        if (i == 0) {
+            px[0] = x;
+            py[0] = y;
+            back_buf[px[0]][py[0]] = '@';
+        }
+        else {
+            px[i] = x;
+            py[i] = y;
+            back_buf[px[i]][py[i]] = '?';
+        }
+    }
+}
+void death_init(void) {
+    map_init(5, (n_alive * 3) + 2);
+    int x, y;
+    fail = randint(0, n_alive - 1);
+    if (n_alive > 1) {
+        fail = randint(0, n_alive - 1);
+    }
+    for (int i = 0; i < n_alive; i++) {
+
+        x = 2;
+        y = 2 + (i * 3);
+        if (i == 0) {
+            px[0] = x;
+            py[0] = y;
+            back_buf[px[0]][py[0]] = '@';
+        }
+        else {
+            px[i] = x;
+            py[i] = y;
+            back_buf[px[i]][py[i]] = '?';
+        }
+    }
 
     tick = 0;
 }
+
 
 bool jebi_placable(int row, int col) {
     if (row < 0 || row >= N_ROW ||
         col < 0 || col >= N_COL ||
         back_buf[row][col] == ' ') {
+        return false;
+    }
+    return true;
+}
+bool jebi_placable3(int row, int col) {
+    if (row < 0 || row >= N_ROW ||
+        col < 0 || col >= N_COL ||
+        back_buf[row][col] == '?') {
         return false;
     }
     return true;
@@ -59,7 +115,6 @@ bool jebi_placable2(int col) {
     return true;
 }
 
-// back_buf[][]ø° ±‚∑œ
 void jebi_manual(key_t key) {
     static int dy[4] = { 0, 0, -3, 3 };
 
@@ -72,49 +127,59 @@ void jebi_manual(key_t key) {
     }
 
     if (dir != 4) {
-        // øÚ¡˜ø©º≠ ≥ı¿œ ¿⁄∏Æ
         int nx, ny;
         nx = px[0];
         ny = py[0] + dy[dir];
         if (!jebi_placable(nx, ny)) {
             return;
         }
-
-        // '@'∏¶ ¿Ãµø
-        back_buf[px[0]][py[0]] = '?';
-        px[0] = nx;
-        py[0] = ny;
-        back_buf[px[0]][py[0]] = '@';
-    }
-    else {
-        if (py[0] == py[selected]) {
-            // ¡¶∫Ò∏¶ ªÃæ“¿∏π«∑Œ ªÃ¿∫ ¡¶∫Ò ¡¶∞≈
-            back_buf[px[0]][py[selected]] = ' ';
-            if (selected == fail) {
-                jebi_dialog(selected, "≈ª∂Ù!");
-                player[selected].is_alive = false; // «√∑π¿ÃæÓ ªÛ≈¬ æ˜µ•¿Ã∆Æ
-                n_alive--;
-                if (player[0].is_alive != TRUE) {
-                    selected = 0; // ¥ŸΩ√ √≥¿Ω∫Œ≈Õ
-                }
-                else {
-                    selected++;
-                }
-                jebi_init();
-                system("cls");
-                fail = randint(0, n_alive - 1); // ¥Ÿ¿Ω ∂ÛøÓµÂ¿« fail¿Ã µ… ¡¶∫Ò πÃ∏Æ ∞·¡§
+        else {
+            if (dir == 2) {
+                now--;
             }
-            else {
-                jebi_dialog(selected, "≈Î∞˙!");
-                selected++; // ¥Ÿ¿Ω «√∑π¿ÃæÓ
-                if (selected >= n_alive) {
-                    selected = 0; // ¥ŸΩ√ √≥¿Ω∫Œ≈Õ
-                    jebi_init();
-                    system("cls");
-                    fail = randint(0, n_alive - 1); // ¥Ÿ¿Ω ∂ÛøÓµÂ¿« fail¿Ã µ… ¡¶∫Ò πÃ∏Æ ∞·¡§
-                }
+            if (dir == 3) {
+                now++;
             }
         }
+        
+        if (jebi_placable3) {
+            back_buf[px[0]][py[0]] = '?';
+            px[0] = nx;
+            py[0] = ny;
+            back_buf[px[0]][py[0]] = '@';
+        }
+        
+    }
+    else {
+            back_buf[px[0]][py[0]] = ' ';
+            if (now == fail) {
+                jebi_dialog(selected, "ÌÉàÎùΩ!");
+                player[selected].is_alive = false;
+                n_alive--;
+                now = 0;
+                if (player[0].is_alive) {
+                    selected = 0; // Îã§Ïãú Ï≤òÏùåÎ∂ÄÌÑ∞
+                }
+                else {
+                    for (int i = 0; i < n_player; i++) {
+                        if (player[i].is_alive == TRUE) {
+                            selected = i;
+                            break;
+                        }
+                    }
+                }
+                death_init();
+                system("cls");
+                
+            }
+            else {
+                jebi_dialog(selected, "ÌÜµÍ≥º!");
+                selected++; // Îã§Ïùå ÌîåÎ†àÏù¥Ïñ¥
+                now = 0;
+                live_init();
+                system("cls");
+            }
+        
     }
 
 
@@ -130,15 +195,15 @@ void jebi_dialog(int p, char message[]) {
         gotoxy(5, 3);
 
         for (int j = 0; j < 16; j++) {
-            printf("-");
+            printf("*");
         }
 
         gotoxy(6, 2);
-        printf("| %d player %s |", p, message);
+        printf("* %d player %s *", p, message);
 
         gotoxy(7, 3);
         for (int j = 0; j < 16; j++) {
-            printf("-");
+            printf("*");
         }
 
         Sleep(300);
@@ -151,7 +216,7 @@ void jebi(void) {
     display();
     int jebi[PLAYER_MAX] = { 0 };
     int y, s = 0, n = 0;
-    int fail = randint(0, n_alive - 1); // ∞¢ ∂ÛøÓµÂ Ω√¿€ Ω√ πÃ∏Æ fail¿Ã µ… ¡¶∫Ò ∞·¡§
+    fail = randint(0, n_alive - 1); // Í∞Å ÎùºÏö¥Îìú ÏãúÏûë Ïãú ÎØ∏Î¶¨ failÏù¥ Îê† Ï†úÎπÑ Í≤∞Ï†ï
 
     while (1) {
         display();
@@ -169,34 +234,10 @@ void jebi(void) {
             break;
         }
 
-        if (key == K_SPACE) {
-            if (selected == fail) {
-                jebi_dialog(selected, "≈ª∂Ù!");
-                player[selected].is_alive = false; // «√∑π¿ÃæÓ ªÛ≈¬ æ˜µ•¿Ã∆Æ
-                back_buf[px[0]][py[selected]] = ' '; // ¡¶∫Ò ∏Ò∑œø°º≠ ¡¶∫Ò ¡¶∞≈
-                n_alive--;
-                selected = 0; // ¥ŸΩ√ √≥¿Ω∫Œ≈Õ
-                jebi_init();
-                system("cls");
-                s = 0;
-                fail = randint(0, n_alive - 1); // ¥Ÿ¿Ω ∂ÛøÓµÂ¿« fail¿Ã µ… ¡¶∫Ò πÃ∏Æ ∞·¡§
-            }
-            else {
-                jebi_dialog(selected, "≈Î∞˙!");
-                selected++; // ¥Ÿ¿Ω «√∑π¿ÃæÓ
-                if (selected >= n_alive) {
-                    selected = 0; // ¥ŸΩ√ √≥¿Ω∫Œ≈Õ
-                    jebi_init();
-                    system("cls");
-                    s = 0;
-                    fail = randint(0, n_alive - 1); // ¥Ÿ¿Ω ∂ÛøÓµÂ¿« fail¿Ã µ… ¡¶∫Ò πÃ∏Æ ∞·¡§
-                }
-            }
-        }
+        
         else if (key != K_UNDEFINED) {
-            jebi_manual(key); // '@' ¿Ãµø
+            jebi_manual(key);
         }
-
         display();
         Sleep(100);
         tick += 10;
