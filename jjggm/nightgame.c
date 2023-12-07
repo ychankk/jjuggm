@@ -1,10 +1,11 @@
 /*
-±¸Çö±â´É
-> ¾ÆÀÌÅÛ ·£´ı¹èÄ¡
-> 0¹øÀ» Á¦¿ÜÇÑ ÇÃ·¹ÀÌ¾î´Â °¡±î¿î ¾ÆÀÌÅÛÀ¸·Î ÀÌµ¿
-> ÇÃ·¹ÀÌ¾î 0¹øÀÌ ¾ÆÀÌÅÛ ÁÂÇ¥¿Í °ãÄ¥°æ¿ì ¾ÆÀÌÅÛ È¹µæ
-(±³È¯ÇßÀ» ¶§ µé°íÀÖ´ø ¾ÆÀÌÅÛÀ» ³»·Á³ö¾ßÇÏ´Âµ¥ ¸øÇÔ, ¹«½ÃÇßÀ» ¶§ ¾ÆÀÌÅÛ µÎ°í °¡¾ßÇÏ´Âµ¥ ¸øÇÔ)
-> 0¹ø ÇÃ·¹ÀÌ¾î°¡ °­Å»/È¸À¯/¹«½Ã ¼±ÅÃÇÒ ¼ö ÀÖÀ½
+êµ¬í˜„ê¸°ëŠ¥
+> ì•„ì´í…œ ëœë¤ë°°ì¹˜
+> í”Œë ˆì´ì–´ 0ë²ˆì´ ì•„ì´í…œ ì¢Œí‘œì™€ ê²¹ì¹ ê²½ìš° ì•„ì´í…œ íšë“
+(êµí™˜í–ˆì„ ë•Œ ë“¤ê³ ìˆë˜ ì•„ì´í…œì„ ë‚´ë ¤ë†”ì•¼í•˜ëŠ”ë° ëª»í•¨, ë¬´ì‹œí–ˆì„ ë•Œ ì•„ì´í…œ ë‘ê³  ê°€ì•¼í•˜ëŠ”ë° ëª»í•¨)
+> 0ë²ˆ í”Œë ˆì´ì–´ê°€ ê°•íƒˆ/íšŒìœ /ë¬´ì‹œ ì„ íƒí•  ìˆ˜ ìˆìŒ
+> ëœë¤í”Œë ˆì´ì–´ê°€ ì•„ì´í…œì„ ë“¤ê³ ìˆì„ ë•Œ, 50%ë¡œ êµí™˜
+> ëœë¤í”Œë ˆì´ì–´ë¼ë¦¬ ë§Œë‚¬ì„ ë•Œ ê°•íƒˆ/íšŒìœ /ë¬´ì‹œ ìˆ˜í–‰
 */
 
 
@@ -25,34 +26,34 @@ typedef struct {
 	ITEM item;
 }ITEM_INFO;
 
-void night_init(void); 
-void night_move_manual(key_t key); 
+void night_init(void);
+void night_move_manual(key_t key);
 void night_move_random(int i, int dir);
 void night_move_tail(int i, int nx, int ny);
-float dist_ptp(int, int); // ÇÃ·¹ÀÌ¾î°£ °Å¸® °è»ê
-void do_rob(int, int); // °­Å» ÇÔ¼ö
-void do_conciliate(int, int); // È¸À¯ ÇÔ¼ö
-void make_item(); // ¾ÆÀÌÅÛ ¹èÄ¡
-void get_item(int, int); // ¾ÆÀÌÅÛ È¹µæ, º¯°æ ÇÔ¼ö
+float dist_ptp(int, int); // í”Œë ˆì´ì–´ê°„ ê±°ë¦¬ ê³„ì‚°
+void do_rob(int, int); // ê°•íƒˆ í•¨ìˆ˜
+void do_conciliate(int, int); // íšŒìœ  í•¨ìˆ˜
+void make_item(); // ì•„ì´í…œ ë°°ì¹˜
+void get_item(int, int); // ì•„ì´í…œ íšë“, ë³€ê²½ í•¨ìˆ˜
 
 ITEM_INFO item_info[ITEM_MAX];
-int px[PLAYER_MAX], py[PLAYER_MAX], period[PLAYER_MAX];// °¢ ÇÃ·¹ÀÌ¾î À§Ä¡, ÀÌµ¿ ÁÖ±â
-int ix[ITEM_MAX], iy[ITEM_MAX];//°¢ ¾ÆÀÌÅÛÀÇ À§Ä¡
-char item_display[ITEM_MAX]; // ¼­·Î ´Ù¸¥ ¾ÆÀÌÅÛÀ» 'I'·Î Ãâ·ÂµÇ°Ô ÇÏ·Á°í
+int px[PLAYER_MAX], py[PLAYER_MAX], period[PLAYER_MAX];// ê° í”Œë ˆì´ì–´ ìœ„ì¹˜, ì´ë™ ì£¼ê¸°
+int ix[ITEM_MAX], iy[ITEM_MAX];//ê° ì•„ì´í…œì˜ ìœ„ì¹˜
+char item_display[ITEM_MAX]; // ì„œë¡œ ë‹¤ë¥¸ ì•„ì´í…œì„ 'I'ë¡œ ì¶œë ¥ë˜ê²Œ í•˜ë ¤ê³ 
 char temp_message[100];
 
 void night_init(void) {
-	map_init(15, 40); // 15x30 Å©±â amp»ı¼º
+	map_init(15, 40); // 15x30 í¬ê¸° ampìƒì„±
 	int x, y;
-	for (int i = 0; i < n_player; i++) { // ÇÃ·¹ÀÌ¾îÀÇ À§Ä¡¸¦ ·£´ıÀ¸·Î Á¤ÇØÁÖ´Â ºÎºĞ
-		// °°Àº ÀÚ¸®°¡ ³ª¿À¸é ´Ù½Ã »ı¼º
+	for (int i = 0; i < n_player; i++) { // í”Œë ˆì´ì–´ì˜ ìœ„ì¹˜ë¥¼ ëœë¤ìœ¼ë¡œ ì •í•´ì£¼ëŠ” ë¶€ë¶„
+		// ê°™ì€ ìë¦¬ê°€ ë‚˜ì˜¤ë©´ ë‹¤ì‹œ ìƒì„±
 		do {
 			x = randint(1, N_ROW - 2);
 			y = randint(1, N_COL - 2);
-		} while (!placable(x, y)); // do-while¹®À» ÅëÇØ ³ÖÀ»°÷ÀÌ ¾ø´Ù¸é ¸ØÃßµµ·Ï.
+		} while (!placable(x, y)); // do-whileë¬¸ì„ í†µí•´ ë„£ì„ê³³ì´ ì—†ë‹¤ë©´ ë©ˆì¶”ë„ë¡.
 		px[i] = x;
 		py[i] = y;
-		period[i] = randint(100, 500); // ÀÌµ¿ ÁÖ±â ¶ÇÇÑ ·£´ıÀ¸·Î ¼³Á¤
+		period[i] = randint(100, 500); // ì´ë™ ì£¼ê¸° ë˜í•œ ëœë¤ìœ¼ë¡œ ì„¤ì •
 
 		back_buf[px[i]][py[i]] = '0' + i;  // (0 .. n_player-1)
 	}
@@ -75,20 +76,20 @@ void night_init(void) {
 }
 
 void night_move_manual(key_t key) {
-	// °¢ ¹æÇâÀ¸·Î ¿òÁ÷ÀÏ ¶§ x, y°ª delta
+	// ê° ë°©í–¥ìœ¼ë¡œ ì›€ì§ì¼ ë•Œ x, yê°’ delta
 	static int dx[4] = { -1, 1, 0, 0 };
 	static int dy[4] = { 0, 0, -1, 1 };
 
-	int dir;  // ¿òÁ÷ÀÏ ¹æÇâ(0~3)
+	int dir;  // ì›€ì§ì¼ ë°©í–¥(0~3)
 	switch (key) {
-		case K_UP: dir = DIR_UP; break; // dir¿¡ 0ÀÌ µé¾î°¨
-		case K_DOWN: dir = DIR_DOWN; break; // " 1ÀÌ "
-		case K_LEFT: dir = DIR_LEFT; break;
-		case K_RIGHT: dir = DIR_RIGHT; break;
-		default: return;
+	case K_UP: dir = DIR_UP; break; // dirì— 0ì´ ë“¤ì–´ê°
+	case K_DOWN: dir = DIR_DOWN; break; // " 1ì´ "
+	case K_LEFT: dir = DIR_LEFT; break;
+	case K_RIGHT: dir = DIR_RIGHT; break;
+	default: return;
 	}
 
-	// ¿òÁ÷¿©¼­ ³õÀÏ ÀÚ¸®
+	// ì›€ì§ì—¬ì„œ ë†“ì¼ ìë¦¬
 	int nx, ny;
 	nx = px[0] + dx[dir];
 	ny = py[0] + dy[dir];
@@ -100,25 +101,23 @@ void night_move_manual(key_t key) {
 }
 
 void night_move_random(int player, int dir) {
-	int p = player;  // ÀÌ¸§ÀÌ ±æ¾î¼­...
-	int nx, ny;  // ¿òÁ÷¿©¼­ ´ÙÀ½¿¡ ³õÀÏ ÀÚ¸®
-
-	// ¿òÁ÷ÀÏ °ø°£ÀÌ ¾ø´Â °æ¿ì´Â ¾ø´Ù°í °¡Á¤(¹«ÇÑ ·çÇÁ¿¡ ºüÁü)	
+	int p = player;  // ì´ë¦„ì´ ê¸¸ì–´ì„œ...
+	int nx, ny;  // ì›€ì§ì—¬ì„œ ë‹¤ìŒì— ë†“ì¼ ìë¦¬
 
 	do {
 		nx = px[p] + randint(-1, 1);
 		ny = py[p] + randint(-1, 1);
-		
+
 	} while (!placable(nx, ny));
 
 	night_move_tail(p, nx, ny);
 }
 
 void night_move_tail(int plr, int nx, int ny) { // 
-	int p = plr;  // ÀÌ¸§ÀÌ ±æ¾î¼­...
+	int p = plr;  // ì´ë¦„ì´ ê¸¸ì–´ì„œ...
 
 	if (px[p] == nx && py[p] == ny) return;
-	
+
 	else {
 		back_buf[nx][ny] = back_buf[px[p]][py[p]];
 		back_buf[px[p]][py[p]] = ' ';
@@ -131,61 +130,85 @@ void night_move_tail(int plr, int nx, int ny) { //
 
 float dist_ptp(int i, int j) {
 	int dx, dy, xx, yy;
-	double distance = 0;
+	float distance = 0;
 	dx = px[i] - px[j];
 	dy = py[i] - py[j];
 	xx = dx * dx;
 	yy = dy * dy;
 
 	distance = (float)sqrt(xx + yy);
-	return (float)distance;
+	return distance;
 
 }
 
 void do_rob(int p1, int p2) {
-	dialog(" °­Å»½Ãµµ! ");
-	if ( (player[p1].str+player[p1].item.str_buf)*0.01 > (player[p2].str + player[p2].item.str_buf)*0.01 ) {
-		dialog(" ¼º °ø! ");
+	dialog(" ê°•íƒˆì‹œë„! ");
+	if ((player[p1].str + player[p1].item.str_buf) * 0.01 > (player[p2].str + player[p2].item.str_buf) * 0.01) {
+		dialog(" ì„± ê³µ! ");
 		ITEM x = player[p1].item;
 		player[p1].item = player[p2].item;
-		player[p2].item = x; // p1,p2ÀÇ ¾ÆÀÌÅÛ ±³È¯
+		player[p2].item = x; // p1,p2ì˜ ì•„ì´í…œ êµí™˜
 		if (player[p1].stamina > 40) {
 			player[p1].stamina -= 40;
+			if (player[p2].stamina > 60) {
+				player[p2].stamina -= 60;
+			}
+			else { player[p2].stamina = 0; }
 		}
 		else {
 			player[p1].stamina = 0;
+			if (player[p2].stamina > 40) {
+				player[p2].stamina -= 40;
+			}
+			else { player[p2].stamina = 0; }
 		}
 
+
 	}
-	else if((player[p1].str + player[p1].item.str_buf) * 0.01 <= (player[p2].str + player[p2].item.str_buf) * 0.01) {
-		dialog(" ½Ç ÆĞ! ");
+	else if ((player[p1].str + player[p1].item.str_buf) * 0.01 <= (player[p2].str + player[p2].item.str_buf) * 0.01) {
+		dialog(" ì‹¤ íŒ¨! ");
 		if (player[p1].stamina < 60) {
 			player[p1].stamina = 0;
+			if (player[p2].stamina > 40) {
+				player[p2].stamina -= 40;
+			}
+			else { player[p2].stamina = 0; }
 		}
 		else {
 			player[p1].stamina -= 60;
+			if (player[p2].stamina > 40) {
+				player[p2].stamina -= 40;
+			}
+			else { player[p2].stamina = 0; }
 		}
 	}
 }
 
 void do_conciliate(int p1, int p2) {
-	dialog(" È¸À¯½Ãµµ! ");
+	dialog(" íšŒìœ ì‹œë„! ");
 	if ((player[p1].intel + player[p1].item.intel_buf) * 0.01 > (player[p2].intel + player[p2].item.intel_buf) * 0.01) {
-		dialog(" ¼º °ø! ");
+		dialog(" ì„± ê³µ! ");
 		ITEM x = player[p1].item;
 		player[p1].item = player[p2].item;
-		player[p2].item = x; // p1,p2ÀÇ ¾ÆÀÌÅÛ ±³È¯
+		player[p2].item = x; // p1,p2ì˜ ì•„ì´í…œ êµí™˜
 		if (player[p1].stamina > 20) {
-
 			player[p1].stamina -= 20;
+			if (player[p2].stamina > 40) {
+				player[p2].stamina -= 40;
+			}
+			else { player[p2].stamina = 0; }
 		}
 		else {
 			player[p1].stamina = 0;
+			if (player[p2].stamina > 20) {
+				player[p2].stamina -= 20;
+			}
+			else { player[p2].stamina = 0; }
 		}
 
 	}
-	else if((player[p1].intel + player[p1].item.intel_buf) * 0.01 <= (player[p2].intel + player[p2].item.intel_buf) * 0.01) {
-		dialog(" ½Ç ÆĞ! ");
+	else if ((player[p1].intel + player[p1].item.intel_buf) * 0.01 <= (player[p2].intel + player[p2].item.intel_buf) * 0.01) {
+		dialog(" ì‹¤ íŒ¨! ");
 
 		if (player[p1].stamina < 40) {
 			player[p1].stamina = 0;
@@ -238,22 +261,22 @@ void nightgame(void) {
 		else if (key != K_UNDEFINED) {
 			night_move_manual(key);
 		}
-		
-		// player 1 ºÎÅÍ´Â ·£´ıÀ¸·Î ¿òÁ÷ÀÓ(8¹æÇâ)
+
+		// player 1 ë¶€í„°ëŠ” ëœë¤ìœ¼ë¡œ ì›€ì§ì„(8ë°©í–¥)
 		for (int i = 1; i < n_player; i++) {
 			if (tick % period[i] == 0) {
 				night_move_random(i, -1);
 			}
 		}
 
-		// 0¹øÀÌ ¾ÆÀÌÅÛ°ú ÁÂÇ¥°¡ °ãÄ¥°æ¿ì, 
+		// 0ë²ˆì´ ì•„ì´í…œê³¼ ì¢Œí‘œê°€ ê²¹ì¹ ê²½ìš°
 		for (int i = 0; i < ITEM_MAX; i++) {
-			if ( px[0] == ix[i] && py[0] == iy[i] ) {
+			if (px[0] == ix[i] && py[0] == iy[i]) {
 				if (player[0].hasitem == false) {
 					get_item(0, i);
 					dialog(" get item! ");
-				} 
-				else if( player[0].hasitem == true ) {
+				}
+				else if (player[0].hasitem == true) {
 					dialog(" want change item? Y/N ");
 					switch (key) {
 					case K_Y:
@@ -269,8 +292,36 @@ void nightgame(void) {
 				}
 			}
 		}
+		//0ë²ˆì´ í”Œë ˆì´ì–´ì™€ ë§Œë‚¬ì„ ë•Œ
+		for (int i = 1; i < n_player; i++) {
+			if (player[0].hasitem == true && player[i].hasitem == true) {
+				if (dist_ptp(0, i) < sqrt(2)) {
+					dialog(" (1)ê°•íƒˆ  (2)íšŒìœ   (3)ë¬´ì‹œ  ");
+					if (player[0].stamina > 0) {
+						switch (key) {
+						case K_ROB:
 
-		// ³ª¸ÓÁö ÇÃ·¹ÀÌ¾î°¡ ¾ÆÀÌÅÛ°ú ÁÂÇ¥°¡ °ãÄ¥°æ¿ì
+							do_rob(0, i);
+
+							break;
+
+						case  K_CON:
+
+							do_conciliate(0, i);
+
+							break;
+						case K_IGNOR:
+							dialog(" ë¬´ì‹œ ");
+							dialog(" press move key ");
+							break;
+
+						}
+					}
+				}
+			}
+		}
+
+		// ë‚˜ë¨¸ì§€ í”Œë ˆì´ì–´ê°€ ì•„ì´í…œê³¼ ì¢Œí‘œê°€ ê²¹ì¹ ê²½ìš°
 		for (int j = 1; j < n_player; j++) {
 			for (int i = 0; i < ITEM_MAX; i++) {
 				if (px[j] == ix[i] && py[j] == iy[i]) {
@@ -279,7 +330,7 @@ void nightgame(void) {
 					}
 					else if (player[j].hasitem == true) {
 						int key = randint(0, 1);
-						switch(key) {
+						switch (key) {
 						case 0:
 							get_item(j, i);
 							break;
@@ -293,61 +344,36 @@ void nightgame(void) {
 			}
 		}
 
-
-		// ³ª¸ÓÁö ÇÃ·¹ÀÌ¾î°¡ ´Ù¸¥ ÇÃ·¹ÀÌ¾î¿Í ¸¸³µÀ» ¶§
-		/*for (int i = 1; i < n_player; i++) {
-			for (int j = 2; j < n_player; j++) {
-				if ((float)dist_ptp(i, j) < (float)sqrt(2)) {
-					int key[2] = {0,1};
-
-					if (key[randint(-1,1)] == 0) {
-						if (player[0].stamina > 0) {
-							do_rob(i, j);
-						}
-					}
-					else if (key[randint(-1,1)] == 1) {
-					}
-
-				}
-			}
-
-		}*/
-
-		//0¹øÀÌ ÇÃ·¹ÀÌ¾î¿Í ¸¸³µÀ» ¶§
+		// ë‚˜ë¨¸ì§€ í”Œë ˆì´ì–´ê°€ ë‹¤ë¥¸ í”Œë ˆì´ì–´ì™€ ë§Œë‚¬ì„ ë•Œ
+		bool once = false;
 		for (int i = 1; i < n_player; i++) {
-			if(player[0].hasitem==true && player[i].hasitem == true) {
-				if (dist_ptp(0, i) < sqrt(2)) {
-					dialog(" (1)°­Å»  (2)È¸À¯  (3)¹«½Ã  ");
-					if (player[0].stamina > 0) {
-						switch (key) {
-						case K_ROB:
-							
-							do_rob(0, i);
-							
-							break;
+			for (int j = i + 1; j < n_player; j++) {
 
-						case  K_CON:
-							
-							do_conciliate(0, i);
-							
-							break;
-						case K_IGNOR:
-							dialog(" ¹«½Ã ");
-							break;
+				if (player[i].hasitem == true && player[j].hasitem == true) {
+					if (dist_ptp(i, j) < sqrt(2)) {
+						if (player[i].stamina > 0) {
+							int key1 = randint(0, 2);
+							switch (key1) {
+							case 0:
+								do_rob(i, j);
+								break;
+							case  1:
+								do_conciliate(i, j);
+								break;
+							case 2:
+								break;
 
+							}
+							once = true;
 						}
 					}
 				}
+
 			}
 		}
-
-
 
 		display();
 		Sleep(10);
 		tick += 10;
-
-
 	}
-
 }
